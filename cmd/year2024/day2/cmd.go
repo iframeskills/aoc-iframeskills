@@ -57,8 +57,7 @@ func isSafeWithRemoval(report []int) bool {
 	// Iterate through each level and check if removing it makes the report safe
 	for i := 0; i < len(report); i++ {
 		// Create a copy of the report with the i-th element removed
-		modifiedReport := append([]int{}, report[:i]...)
-		modifiedReport = append(modifiedReport, report[i+1:]...)
+		modifiedReport := append(report[:i:i], report[i+1:]...)
 
 		// Check if the modified report is safe
 		if isSafe(modifiedReport) {
