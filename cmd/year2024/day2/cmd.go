@@ -51,6 +51,24 @@ func isSafe(report []int) bool {
 	return true
 }
 
+// Check if removing a single level makes the report safe
+func isSafeWithRemoval(report []int) bool {
+
+	// Iterate through each level and check if removing it makes the report safe
+	for i := 0; i < len(report); i++ {
+		// Create a copy of the report with the i-th element removed
+		modifiedReport := append([]int{}, report[:i]...)
+		modifiedReport = append(modifiedReport, report[i+1:]...)
+
+		// Check if the modified report is safe
+		if isSafe(modifiedReport) {
+			return true
+		}
+	}
+
+	// If no single removal makes the report safe, return false
+	return false
+}
 func part1(s string) int64 {
 	var score int64
 	for _, line := range strings.Split(s, "\n") {
@@ -73,5 +91,23 @@ func part1(s string) int64 {
 }
 
 func part2(s string) int64 {
-	return 0
+
+	var score int64
+	for _, line := range strings.Split(s, "\n") {
+		// Parse the line into a slice of integers
+		fields := strings.Fields(line)
+		report := make([]int, len(fields))
+		for i, field := range fields {
+			num, err := strconv.Atoi(field)
+			if err != nil {
+				fmt.Printf("Invalid number in report: %s\n", field)
+			}
+			report[i] = num
+		}
+
+		if isSafeWithRemoval(report) {
+			score++
+		}
+	}
+	return score
 }
