@@ -14,7 +14,7 @@ func TestParts(t *testing.T) {
 		fn       func(string) int64
 	}{
 		{
-			expected: 1,
+			expected: 18,
 			input:    "test.txt",
 			fn:       part1,
 		},
