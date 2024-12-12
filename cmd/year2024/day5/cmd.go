@@ -1,7 +1,6 @@
 package day5
 
 import (
-	"container/list"
 	"fmt"
 	"os"
 	"strconv"
@@ -67,73 +66,27 @@ func parseInput(input string) (map[int]map[int]bool, [][]int) {
 }
 
 func isValidUpdate(rules map[int]map[int]bool, update []int) bool {
-	// Create a map for the in-degrees of each page
-	inDegree := make(map[int]int)
-	for page := range rules {
-		inDegree[page] = 0
+	// For each update, we must check the ordering constraints between pages
+	pageIndex := make(map[int]int)
+	for i, page := range update {
+		pageIndex[page] = i
 	}
 
-	// Count in-degrees based on the rules
-	for _, successors := range rules {
-		for successor := range successors {
-			inDegree[successor]++
-		}
-	}
-
-	// Now, perform Kahn's algorithm (Topological sort)
-	queue := list.New()
-	for page, degree := range inDegree {
-		if degree == 0 {
-			queue.PushBack(page)
-		}
-	}
-
-	sortedPages := []int{}
-	for queue.Len() > 0 {
-		page := queue.Remove(queue.Front()).(int)
-		// Ensure the page is in the update
-		if contains(update, page) {
-			sortedPages = append(sortedPages, page)
-		}
-
-		// Reduce in-degree of successors
-		if successors, exists := rules[page]; exists {
-			for successor := range successors {
-				inDegree[successor]--
-				if inDegree[successor] == 0 {
-					queue.PushBack(successor)
+	// Validate the order using the rules
+	for x, successors := range rules {
+		for y := range successors {
+			// If both x and y are in the update, check if x comes before y
+			if _, xInUpdate := pageIndex[x]; xInUpdate {
+				if _, yInUpdate := pageIndex[y]; yInUpdate {
+					if pageIndex[x] > pageIndex[y] {
+						// Violation found, x must come before y
+						return false
+					}
 				}
 			}
 		}
 	}
-
-	// Check if we processed all pages in the update
-	if len(sortedPages) == len(update) {
-		// Ensure that the update respects the topological order
-		pageIndex := make(map[int]int)
-		for i, page := range sortedPages {
-			pageIndex[page] = i
-		}
-
-		// Validate the update's order against the topological order
-		for i := 0; i < len(update)-1; i++ {
-			if pageIndex[update[i]] > pageIndex[update[i+1]] {
-				return false
-			}
-		}
-
-		return true
-	}
-	return false
-}
-
-func contains(arr []int, x int) bool {
-	for _, val := range arr {
-		if val == x {
-			return true
-		}
-	}
-	return false
+	return true
 }
 
 func findMiddlePage(update []int) int {
