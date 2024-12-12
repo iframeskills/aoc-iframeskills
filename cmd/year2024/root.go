@@ -19,6 +19,7 @@ import (
 	"aoc/cmd/year2024/day23"
 	"aoc/cmd/year2024/day24"
 	"aoc/cmd/year2024/day25"
+	"aoc/cmd/year2024/day3"
 	"aoc/cmd/year2024/day4"
 	"aoc/cmd/year2024/day5"
 	"aoc/cmd/year2024/day6"
@@ -43,6 +44,7 @@ var Cmd = &cobra.Command{
 func init() {
 	Cmd.AddCommand(day1.Cmd)
 	Cmd.AddCommand(day2.Cmd)
+	Cmd.AddCommand(day3.Cmd)
 	Cmd.AddCommand(day4.Cmd)
 	Cmd.AddCommand(day5.Cmd)
 	Cmd.AddCommand(day6.Cmd)
