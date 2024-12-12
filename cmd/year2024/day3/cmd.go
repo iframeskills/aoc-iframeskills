@@ -48,9 +48,9 @@ func getValidInstructions(input string) []string {
 	return re.FindAllString(input, -1)
 }
 
-func part1(s string) int64 {
+func getScore(input string) int64 {
 	var score int64
-	for _, line := range strings.Split(s, "\n") {
+	for _, line := range strings.Split(input, "\n") {
 		fmt.Println(line)
 		validInstructions := getValidInstructions(line)
 
@@ -83,6 +83,34 @@ func part1(s string) int64 {
 	return score
 }
 
+func part1(s string) int64 {
+	return getScore(s)
+}
+
 func part2(s string) int64 {
-	return 0
+	// Step 1: Concatenate all strings
+	concatenated := strings.Join(strings.Split(s, "\n"), "")
+
+	// Step 2: Process the instructions
+	var result strings.Builder
+	include := true // Start in "include" mode
+
+	for i := 0; i < len(concatenated); i++ {
+		if strings.HasPrefix(concatenated[i:], "do()") {
+			// Found "do()" - switch to "include" mode and append "do()"
+			include = true
+			result.WriteString("do()")
+			i += len("do()") - 1 // Skip the length of "do()"
+		} else if strings.HasPrefix(concatenated[i:], "don't()") {
+			// Found "don't()" - switch to "exclude" mode and append "don't()"
+			include = false
+			result.WriteString("don't()")
+			i += len("don't()") - 1 // Skip the length of "don't()"
+		} else if include {
+			// Only append characters if in "include" mode
+			result.WriteByte(concatenated[i])
+		}
+	}
+
+	return getScore(result.String())
 }
